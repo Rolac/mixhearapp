@@ -39,11 +39,7 @@ public class CustomAdapter extends BaseAdapter{
         return position;
     }
 
-    public class Holder
-    {
-        TextView tv;
-        ImageView img;
-    }
+
     @Override
     public View getView(final int position, final View convertView, ViewGroup parent) {
 
@@ -57,7 +53,7 @@ public class CustomAdapter extends BaseAdapter{
         TextView textView = (TextView)view.findViewById(R.id.textListItem);
         textView.setText(listSong[position].getName());
         ImageView imageView = (ImageView)view.findViewById(R.id.imageListItem);
-        String url = listSong[position].getUrl();
+        String url = listSong[position].getIMAGE_URL_MEDIUM();
         Glide
                 .with(mainActivity)
                 .load(url)
@@ -86,5 +82,6 @@ public class CustomAdapter extends BaseAdapter{
         } else
             Toast.makeText(mainActivity, "Impossibile caricare i dati! ", Toast.LENGTH_SHORT).show();
     }
+
 
 }

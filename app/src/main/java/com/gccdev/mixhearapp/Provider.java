@@ -17,7 +17,6 @@ public class Provider extends ContentProvider {
 
     private Db db = null;
     private static final String TAG = "provider";
-
     private static final int CODE_SONGS = 100;
     private static final int CODE_SONG = 101;
 
@@ -37,6 +36,7 @@ public class Provider extends ContentProvider {
     @Override
     public boolean onCreate() {
         db = new Db(getContext());
+        Log.v(TAG,"DATABASE CREATO CORRETTAMENTE");
         return true;
     }
 
@@ -70,7 +70,7 @@ public class Provider extends ContentProvider {
                 cursor = db.getReadableDatabase().query(
                         Contract.Songs.TABLE_NAME,
                         projection,
-                        Contract.Songs.COLUMN_ID + " = ?",  // prende la tupla corrispondente
+                        Contract.Songs.COLUMN_ID + " = ?",
                         new String[]{uri.getLastPathSegment()},
                         null, null, null
                 );

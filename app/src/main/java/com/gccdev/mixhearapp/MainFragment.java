@@ -1,7 +1,8 @@
 package com.gccdev.mixhearapp;
 
-import android.content.ContentValues;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainFragment extends Fragment {
 
@@ -57,16 +61,47 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
         context=getActivity();
+        String testo;
+        String urlImageMedium;
+        ListView listView;
+
+        List<Song> result = new ArrayList<>();
+
         DataParser dataParser = new DataParser(context,rootView);
-       dataParser.execute(NEW);
+        dataParser.execute(NEW);
+
+        adapter = new CustomAdapter(context);
+        ContentResolver resolver = context.getContentResolver();
+
+        Cursor cursor = resolver.query(
+                Contract.Songs.CONTENT_URI,
+                new String[]{Contract.Songs.COLUMN_TITLE, Contract.Songs.COLUMN_PIC_MEDIUM},
+                null,
+                null,
+                null
+        );
+
+        if( cursor != null ) {
+            while (cursor.moveToNext()) {
+
+                testo = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_TITLE));
+                urlImageMedium = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_PIC_MEDIUM));
+
+                Song p = new Song(testo, urlImageMedium);
+                result.add(p);
 
 
-        ContentValues values = new ContentValues();
-        values.put(Contract.Songs.COLUMN_ID,"TITOLO_PROVA");
-        songUri = context.getContentResolver().insert(
-                       Contract.Songs.CONTENT_URI,
-                        values
-                );
+            }
+            cursor.close();
+
+        }
+
+        listView = (ListView)rootView.findViewById(R.id.listview);
+        adapter = new CustomAdapter(context);
+        listView.setAdapter(adapter);
+        Song[] res = result.toArray(new Song[result.size()]);
+        adapter.setData(res);
+
 
 
 

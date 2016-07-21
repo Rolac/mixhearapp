@@ -27,7 +27,7 @@ public class CustomCursorAdapter extends CursorAdapter{
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         String title = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_ID));
-        String imageMedium = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_PIC_MEDIUM));
+      //  String imageMedium = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_PIC_MEDIUM));
 
         TextView textView = (TextView)view.findViewById(R.id.textListItem);
         textView.setText(title);
