@@ -9,6 +9,7 @@ public class Statements {
     public static final String SONGS_CREATE_STATEMENT = START_STATEMENTS + Contract.Songs.TABLE_NAME + " ( " +
             Contract.Songs.COLUMN_ID + " INTEGER PRIMARY KEY , " +
             Contract.Songs.COLUMN_TITLE + " text, " +
+            Contract.Songs.COLUMN_AUTHOR + " text, " +
             Contract.Songs.COLUMN_CREATED_TIME + " text, " +
             Contract.Songs.COLUMN_LENGTH + " text, " +
             Contract.Songs.COLUMN_SLUG + " text, " +

@@ -19,22 +19,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class DataParser extends AsyncTask<String,Void,Void>{
     private final  String TAG = DataParser.class.getSimpleName();
     private static Context context;
-    private View rootView;
     private static final String BASE_URL = "https://api.mixcloud.com";
-//    private static CustomAdapter adapter;
- //   private static  CustomCursorAdapter cursorAdapter;
-  //  private ListView listView;
+
     private static ProgressDialog progBar;
 
 
     private static final String TITLE = "name";
+    private static final String USER ="user";
+    private static final String AUTHOR = "name";
     private static final String IMAGE_URL = "pictures";
     private static final String DIM_MEDIUM = "medium_mobile" ;
     private static final String DIM_LARGE ="large";
@@ -49,11 +46,10 @@ public class DataParser extends AsyncTask<String,Void,Void>{
     private static final String UPDATED_TIME = "updated_time";
     private static final String COMMENT_COUNT ="comment_count";
 
-    private static Uri songUri;
-    //COSTRUTTORE
+
     public DataParser(Context context, View rootView){
         this.context = context;
-        this.rootView=rootView;
+        View rootView1 = rootView;
         progBar = new ProgressDialog(context);
         progBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progBar.setIndeterminate(true);
@@ -75,25 +71,7 @@ public class DataParser extends AsyncTask<String,Void,Void>{
 
     }
 
-
-    protected void onPostExecute() {
-//        listView = (ListView)rootView.findViewById(R.id.listview);
-//        adapter = new CustomAdapter(context);
-//        listView.setAdapter(adapter);
-//        adapter.setData(list);
-//        adapter.notifyDataSetChanged();
-//        progBar.dismiss();
-//
-//
-    }
-
-
-
     public  static  void parseStr(String JSONStr) throws JSONException{
-
-
-      //  List<Song> result = new ArrayList<>();
-        List<String> urls = new ArrayList<>();
 
         JSONObject res = new JSONObject(JSONStr);
         JSONArray data = res.getJSONArray("data");
@@ -109,8 +87,9 @@ public class DataParser extends AsyncTask<String,Void,Void>{
 
                 JSONObject songs = data.getJSONObject(i);
                 String title = songs.getString(TITLE);
+                JSONObject user = songs.getJSONObject(USER);
+                String author = user.getString(AUTHOR);
                 String created_time = songs.getString(CREATED);
-
                 String l = songs.optString(LENGTH);
                 String length = getDurationString(l);
                 String slug = songs.getString(SLUG);
@@ -123,16 +102,13 @@ public class DataParser extends AsyncTask<String,Void,Void>{
                 int comment_c = songs.getInt(COMMENT_COUNT);
                 JSONObject pic = songs.getJSONObject(IMAGE_URL);
                 String imageUrlMedium = pic.getString(DIM_MEDIUM);
+                String imageUrlLarge = pic.getString(DIM_LARGE);
 
-             //   urls.add(new String(imageUrlMedium));
-                  String imageUrlLarge = pic.getString(DIM_LARGE);
-
-              //  Song p = new Song(title, imageUrlMedium);
-               // result.add(p);
 
                 arrayValues[i] = new ContentValues();
                 arrayValues[i].put(Contract.Songs.COLUMN_ID,i);
                 arrayValues[i].put(Contract.Songs.COLUMN_TITLE,title);
+                arrayValues[i].put(Contract.Songs.COLUMN_AUTHOR,author);
                 arrayValues[i].put(Contract.Songs.COLUMN_LENGTH,length);
                 arrayValues[i].put(Contract.Songs.COLUMN_CREATED_TIME,created_time);
                 arrayValues[i].put(Contract.Songs.COLUMN_SLUG,slug);
@@ -154,7 +130,7 @@ public class DataParser extends AsyncTask<String,Void,Void>{
         resolver.bulkInsert(Contract.Songs.CONTENT_URI,arrayValues);
         progBar.dismiss();
 
-      //adapter.setData(urls.toArray(new Song[result.size()]));
+
     }
 
 //        public static String getPreviousPage(String JSONStr) throws JSONException{
@@ -175,12 +151,10 @@ public class DataParser extends AsyncTask<String,Void,Void>{
             connection.setConnectTimeout(15000);
             connection.setRequestMethod("GET");
             connection.setDoInput(true);
-            // invia la richiesta
             connection.connect();
             int response = connection.getResponseCode();
-            Log.d(TAG, "Risposta: " + response);
+            //Log.d(TAG, "Risposta: " + response);
             is = connection.getInputStream();
-            //Converte InputStream in una stringa
             StringBuffer buffer = new StringBuffer();
 
             if (is == null)
@@ -200,7 +174,6 @@ public class DataParser extends AsyncTask<String,Void,Void>{
             Log.v(TAG, "JSON String :" + JSONStr);
         } catch (IOException e) {
             e.printStackTrace();
-            //Assicuriamoci che l'InputStream venga chiuso
         } finally {
             if (is != null)
                 is.close();
@@ -210,15 +183,12 @@ public class DataParser extends AsyncTask<String,Void,Void>{
 
 
     public void getData(String param) {
-       // Song[] result = new Song[0];
         String n = param;
         try {
-
-                Uri builtUri = Uri.parse(BASE_URL).buildUpon()
+               Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                        .appendPath(n)
                        .build();
-                URL url = new URL(builtUri.toString());
-                Log.v(TAG,"Built URI " + builtUri.toString());
+               Log.v(TAG,"Built URI " + builtUri.toString());
                 String recipeJsonStr = downloadUrl(builtUri.toString());
                 parseStr(recipeJsonStr);
 
@@ -226,7 +196,6 @@ public class DataParser extends AsyncTask<String,Void,Void>{
         }catch(Exception e){
             e.printStackTrace();
         }
-       // return result;
     }
 
     public static  String getDurationString(String s) {

@@ -15,14 +15,15 @@ public class Contract {
 
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TITLE = TABLE_NAME + "_TITLE";
+        public static final String COLUMN_AUTHOR = TABLE_NAME + "_AUTHOR";
         public static final String COLUMN_LENGTH = TABLE_NAME + "_LENGTH";
-        public static final String COLUMN_CREATED_TIME = TABLE_NAME + "createdTime";
-         public static final String COLUMN_SLUG = TABLE_NAME + "slug";
-        public static final String COLUMN_URL = TABLE_NAME + "url";
-        public static final String COLUMN_PLAY_COUNT = TABLE_NAME + "playCount";
-        public static final String COLUMN_FAVORITE_COUNT = TABLE_NAME + "favoriteCount";
-        public static final String COLUMN_LISTENER_COUNT = TABLE_NAME + "listenerCount";
-        public static final String COLUMN_COMMENT_COUNT = TABLE_NAME + "commentCount";
+        public static final String COLUMN_CREATED_TIME = TABLE_NAME + "_CREATED_TIME";
+         public static final String COLUMN_SLUG = TABLE_NAME + "_SLUG";
+        public static final String COLUMN_URL = TABLE_NAME + "_URL";
+        public static final String COLUMN_PLAY_COUNT = TABLE_NAME + "_PLAY_COUNT";
+        public static final String COLUMN_FAVORITE_COUNT = TABLE_NAME + "_FAVORITE_COUNT";
+        public static final String COLUMN_LISTENER_COUNT = TABLE_NAME + "_LISTENER_COUNT";
+        public static final String COLUMN_COMMENT_COUNT = TABLE_NAME + "_COMMENT_COUNT";
         public static final String COLUMN_PIC_MEDIUM = TABLE_NAME + "_PIC_MEDIUM";
        public static final String COLUMN_PIC_LARGE = TABLE_NAME + "_PIC_LARGE";
 

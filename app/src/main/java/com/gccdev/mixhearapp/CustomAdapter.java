@@ -21,6 +21,8 @@ public class CustomAdapter extends BaseAdapter{
     Cursor cursor;
     LayoutInflater inflater;
 
+    private OnItemClickListener listener;
+
     public CustomAdapter(Context context, Cursor cursor){
         this.mActivity = context;
         this.cursor = cursor;
@@ -51,7 +53,7 @@ public class CustomAdapter extends BaseAdapter{
         Holder holder;
         cursor.moveToPosition(position);
         final String title;
-        // LayoutInflater inflater = LayoutInflater.from(mActivity);
+        final int ID;
 
         if (view == null){
             view = inflater.inflate(R.layout.list_item, parent, false);
@@ -59,15 +61,13 @@ public class CustomAdapter extends BaseAdapter{
         holder = new Holder();
 
         holder.tvTitle = (TextView) view.findViewById(R.id.textListItem);
-        //  textView.setText(listSong[position].getName());
         holder.ivImage = (ImageView) view.findViewById(R.id.imageListItem);
-        //   String url = listSong[position].getIMAGE_URL_MEDIUM();
         view.setTag(holder);
     }else{
             holder = (Holder)view.getTag();
         }
-        title = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_TITLE));
-        holder.tvTitle.setText(title);
+
+        holder.tvTitle.setText(cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_TITLE)));
         String url = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_PIC_MEDIUM));
         Glide
                 .with(mActivity)
@@ -80,7 +80,7 @@ public class CustomAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 Intent mIntent = new Intent(mActivity,DetailActivity.class);
-                        mIntent.putExtra("name",title);
+                        mIntent.putExtra("position",position);
                 mActivity.startActivity(mIntent);
 
             }
@@ -93,12 +93,26 @@ public class CustomAdapter extends BaseAdapter{
         ImageView ivImage;
     }
 
-//    public void setData(Song[] list){
-//        if(listSong != null){
-//            this.listSong = list;
-//        } else
-//            Toast.makeText(mActivity, "Impossibile caricare i dati! ", Toast.LENGTH_SHORT).show();
-//    }
+    public void swapCursor(Cursor cursor){
 
+        if(cursor==null){
+            this.cursor.close();
+        }
+
+        else if(cursor!=this.cursor) {
+            this.cursor.close();
+            this.cursor = cursor;
+            notifyDataSetChanged();
+        }
+
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener=listener;
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(long id);
+    }
 
 }

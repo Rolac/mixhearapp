@@ -16,7 +16,7 @@
 
 
     <ImageView
-        android:layout_width="200dp"
+        android:layout_width="match_parent"
         android:layout_height="200dp"
         android:id="@+id/imageSongLarge"
         android:src="@drawable/ic_menu_gallery"
@@ -24,16 +24,21 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/prova"
-        android:text="NOME"
+        android:id="@+id/titolo"
+
         android:layout_below="@+id/imageSongLarge"
         android:layout_centerHorizontal="true"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/titolo">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/infoLayout"
-        android:layout_below="@+id/prova"
+        android:layout_below="@+id/titolo"
         >
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,7 +53,8 @@
                 android:layout_weight="0.5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="x"/>
+                android:id="@+id/authorView"
+                />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textLength"
-                android:text="vvvvvvvvvvvv"/>
+                />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -79,7 +85,8 @@
                 android:layout_weight="0.5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="vvvvvvvvvvvv"/>
+                android:id="@+id/creationView"
+                />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -95,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textFavorite"
-                android:text="f"/>
+                />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -111,7 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textListener"
-                android:text="vvvvvvvvvvvv"/>
+                />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -127,23 +134,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textComment"
-                android:text="vvvvvvvvvvvv"/>
+                />
         </LinearLayout>
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
-                android:layout_weight="0.5"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/ascolta"
                 android:text="Ascolta"/>
             <TextView
-                android:layout_weight="0.5"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="URL"/>
-        </LinearLayout>
+                android:layout_below="@+id/ascolta"
+                android:id="@+id/urlView"
+               />
+        </RelativeLayout>
+
 
     </LinearLayout>
+
+    </ScrollView>
 </RelativeLayout>
