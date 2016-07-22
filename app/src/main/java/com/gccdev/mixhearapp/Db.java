@@ -10,7 +10,7 @@ import android.util.Log;
 public class Db extends SQLiteOpenHelper{
 	
 	private static final String DB_NAME = "mixhearapp.db";
-	private static final int DB_VERSION = 6;
+	private static final int DB_VERSION = 7;
 
 	public Db(Context context){
 		super(context, DB_NAME, null, DB_VERSION);
@@ -37,5 +37,7 @@ public class Db extends SQLiteOpenHelper{
 		super.onConfigure(db);
 		db.setForeignKeyConstraintsEnabled(true);
 	}
+
+
 	
 }

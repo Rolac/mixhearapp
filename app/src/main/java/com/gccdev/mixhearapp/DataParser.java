@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,8 +28,9 @@ public class DataParser extends AsyncTask<String,Void,Void>{
     private static Context context;
     private View rootView;
     private static final String BASE_URL = "https://api.mixcloud.com";
-    private static CustomAdapter adapter;
-    private ListView listView;
+//    private static CustomAdapter adapter;
+ //   private static  CustomCursorAdapter cursorAdapter;
+  //  private ListView listView;
     private static ProgressDialog progBar;
 
 
@@ -118,14 +118,14 @@ public class DataParser extends AsyncTask<String,Void,Void>{
                 int play_c = songs.getInt(PLAY_COUNT);
                 int favorite_c = songs.getInt(FAVORITE_COUNT);
                 int listener_c = songs.getInt(LISTENER_COUNT);
-                int repost_c = songs.getInt(REPOST_COUNT);
-                String up_time = songs.getString(UPDATED_TIME);
+            //    int repost_c = songs.getInt(REPOST_COUNT);
+            //    String up_time = songs.getString(UPDATED_TIME);
                 int comment_c = songs.getInt(COMMENT_COUNT);
                 JSONObject pic = songs.getJSONObject(IMAGE_URL);
                 String imageUrlMedium = pic.getString(DIM_MEDIUM);
 
-                urls.add(new String(imageUrlMedium));
-                String imageUrlLarge = pic.getString(DIM_LARGE);
+             //   urls.add(new String(imageUrlMedium));
+                  String imageUrlLarge = pic.getString(DIM_LARGE);
 
               //  Song p = new Song(title, imageUrlMedium);
                // result.add(p);
@@ -134,6 +134,15 @@ public class DataParser extends AsyncTask<String,Void,Void>{
                 arrayValues[i].put(Contract.Songs.COLUMN_ID,i);
                 arrayValues[i].put(Contract.Songs.COLUMN_TITLE,title);
                 arrayValues[i].put(Contract.Songs.COLUMN_LENGTH,length);
+                arrayValues[i].put(Contract.Songs.COLUMN_CREATED_TIME,created_time);
+                arrayValues[i].put(Contract.Songs.COLUMN_SLUG,slug);
+                arrayValues[i].put(Contract.Songs.COLUMN_URL,url);
+                arrayValues[i].put(Contract.Songs.COLUMN_PLAY_COUNT,play_c);
+                arrayValues[i].put(Contract.Songs.COLUMN_FAVORITE_COUNT,favorite_c);
+                arrayValues[i].put(Contract.Songs.COLUMN_COMMENT_COUNT,comment_c);
+                arrayValues[i].put(Contract.Songs.COLUMN_LISTENER_COUNT,listener_c);
+                arrayValues[i].put(Contract.Songs.COLUMN_PLAY_COUNT,play_c);
+                arrayValues[i].put(Contract.Songs.COLUMN_PIC_MEDIUM,imageUrlMedium);
                 arrayValues[i].put(Contract.Songs.COLUMN_PIC_LARGE,imageUrlLarge);
 
 
@@ -221,6 +230,9 @@ public class DataParser extends AsyncTask<String,Void,Void>{
     }
 
     public static  String getDurationString(String s) {
+        if(s == ""){
+            s = "0";
+        }
         int seconds = Integer.parseInt(s);
         int hours = seconds / 3600;
         int minutes = (seconds % 3600) / 60;

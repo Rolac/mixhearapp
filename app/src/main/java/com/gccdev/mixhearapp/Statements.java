@@ -6,8 +6,8 @@ package com.gccdev.mixhearapp;
 public class Statements {
     private static final String START_STATEMENTS = "create table if not exists ";
 
-    public static final String SONGS_CREATE_STATEMENT = START_STATEMENTS + Contract.Songs.TABLE_NAME + " (" +
-            Contract.Songs.COLUMN_ID + " integer primary key, " +
+    public static final String SONGS_CREATE_STATEMENT = START_STATEMENTS + Contract.Songs.TABLE_NAME + " ( " +
+            Contract.Songs.COLUMN_ID + " INTEGER PRIMARY KEY , " +
             Contract.Songs.COLUMN_TITLE + " text, " +
             Contract.Songs.COLUMN_CREATED_TIME + " text, " +
             Contract.Songs.COLUMN_LENGTH + " text, " +
@@ -19,5 +19,5 @@ public class Statements {
             Contract.Songs.COLUMN_COMMENT_COUNT+ " integer default 0, " +
             Contract.Songs.COLUMN_PIC_MEDIUM + " text, " +
             Contract.Songs.COLUMN_PIC_LARGE + " text" +
-         ");";
+         " );";
 }

@@ -13,7 +13,7 @@ public class Contract {
     public static final class Songs {
         public static final String TABLE_NAME = "songs";
 
-        public static final String COLUMN_ID = TABLE_NAME + "_ID";
+        public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TITLE = TABLE_NAME + "_TITLE";
         public static final String COLUMN_LENGTH = TABLE_NAME + "_LENGTH";
         public static final String COLUMN_CREATED_TIME = TABLE_NAME + "createdTime";
