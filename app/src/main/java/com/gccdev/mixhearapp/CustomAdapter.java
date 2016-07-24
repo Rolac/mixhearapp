@@ -1,43 +1,54 @@
 package com.gccdev.mixhearapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
 
-public class CustomAdapter extends BaseAdapter{
+public class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-    private Song[] listSong = new Song[0];
+
     private Context mActivity;
-    View view;
+
     Cursor cursor;
     LayoutInflater inflater;
 
     private OnItemClickListener listener;
 
-    public CustomAdapter(Context context, Cursor cursor){
-        this.mActivity = context;
+    public CustomAdapter( Cursor cursor){
+
         this.cursor = cursor;
-        inflater = (LayoutInflater)mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
     }
 
 
+
     @Override
-    public int getCount() {
-        return cursor.getCount();
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        switch (viewType){
+            default: return new ViewHolder(
+                    LayoutInflater.from(parent.getContext())
+                            .inflate(R.layout.list_item, parent, false));
+        }
+
     }
 
     @Override
-    public Object getItem(int position) {
-        return listSong[position];
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        cursor.moveToPosition(position);
+        final int id = cursor.getInt(cursor.getColumnIndex(Contract.Songs.COLUMN_ID));
+        final String text = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_TITLE));
+        final String url = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_PIC_MEDIUM));
+
+        buildHolder((ViewHolder) holder, id, text, url);
     }
 
     @Override
@@ -45,52 +56,53 @@ public class CustomAdapter extends BaseAdapter{
         return position;
     }
 
-
     @Override
-    public View getView(final int position, final View convertView, ViewGroup parent) {
+    public int getItemCount() {
+        if(cursor == null)
+            return 0;
+       return cursor.getCount();
+    }
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
-        view = convertView;
-        Holder holder;
-        cursor.moveToPosition(position);
-        final String title;
-        final int ID;
 
-        if (view == null){
-            view = inflater.inflate(R.layout.list_item, parent, false);
+    private void buildHolder(ViewHolder holder, final int id, String name, String image){
 
-        holder = new Holder();
 
-        holder.tvTitle = (TextView) view.findViewById(R.id.textListItem);
-        holder.ivImage = (ImageView) view.findViewById(R.id.imageListItem);
-        view.setTag(holder);
-    }else{
-            holder = (Holder)view.getTag();
-        }
-
-        holder.tvTitle.setText(cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_TITLE)));
-        String url = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_PIC_MEDIUM));
         Glide
-                .with(mActivity)
-                .load(url)
+              .with(holder.itemView.getContext())
+                .load(image)
                 .centerCrop()
                 .placeholder(R.drawable.ic_menu_gallery)
-                .into(holder.ivImage);
+               .into(holder.imageView);
 
-        view.setOnClickListener(new View.OnClickListener() {
+        holder.nameView.setText(name);
+
+        holder.rootLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent mIntent = new Intent(mActivity,DetailActivity.class);
-                        mIntent.putExtra("position",position);
-                mActivity.startActivity(mIntent);
-
+            public void onClick(View view) {
+                if(listener!=null)
+                    listener.onItemClick(id);
             }
         });
 
-        return view;
     }
-    class Holder {
-        TextView tvTitle;
-        ImageView ivImage;
+
+    static class ViewHolder extends RecyclerView.ViewHolder{
+
+        TextView nameView;
+        ImageView imageView;
+        LinearLayout rootLayout;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+            rootLayout = (LinearLayout) itemView.findViewById(R.id.rootLayout);
+            nameView = (TextView)itemView.findViewById(R.id.textListItem);
+            imageView = (ImageView)itemView.findViewById(R.id.imageListItem);
+        }
     }
 
     public void swapCursor(Cursor cursor){
@@ -112,7 +124,9 @@ public class CustomAdapter extends BaseAdapter{
     }
 
     public interface OnItemClickListener{
-        void onItemClick(long id);
+        void onItemClick(int id);
     }
+
+
 
 }

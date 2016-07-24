@@ -34,7 +34,7 @@ public class DataParser extends AsyncTask<String,Void,Void>{
     private static final String AUTHOR = "name";
     private static final String IMAGE_URL = "pictures";
     private static final String DIM_MEDIUM = "medium_mobile" ;
-    private static final String DIM_LARGE ="large";
+    private static final String DIM_LARGE ="1024wx1024h";
     private static final String CREATED ="created_time";
     private static final String LENGTH ="audio_length";
     private static final String SLUG ="slug";
@@ -42,14 +42,11 @@ public class DataParser extends AsyncTask<String,Void,Void>{
     private static final String PLAY_COUNT ="play_count";
     private static final String FAVORITE_COUNT = "favorite_count";
     private static final String LISTENER_COUNT = "listener_count";
-    private static final String REPOST_COUNT = "repost_count";
-    private static final String UPDATED_TIME = "updated_time";
-    private static final String COMMENT_COUNT ="comment_count";
+   private static final String COMMENT_COUNT ="comment_count";
 
 
     public DataParser(Context context, View rootView){
         this.context = context;
-        View rootView1 = rootView;
         progBar = new ProgressDialog(context);
         progBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progBar.setIndeterminate(true);
@@ -97,8 +94,6 @@ public class DataParser extends AsyncTask<String,Void,Void>{
                 int play_c = songs.getInt(PLAY_COUNT);
                 int favorite_c = songs.getInt(FAVORITE_COUNT);
                 int listener_c = songs.getInt(LISTENER_COUNT);
-            //    int repost_c = songs.getInt(REPOST_COUNT);
-            //    String up_time = songs.getString(UPDATED_TIME);
                 int comment_c = songs.getInt(COMMENT_COUNT);
                 JSONObject pic = songs.getJSONObject(IMAGE_URL);
                 String imageUrlMedium = pic.getString(DIM_MEDIUM);
@@ -133,12 +128,7 @@ public class DataParser extends AsyncTask<String,Void,Void>{
 
     }
 
-//        public static String getPreviousPage(String JSONStr) throws JSONException{
-//        JSONObject res = new JSONObject(JSONStr);
-//        JSONObject paging = res.getJSONObject("paging");
-//        return paging.getString("previous");
-//
-//    }
+
 
     private String downloadUrl(String myUrl) throws IOException {
         InputStream is = null;
@@ -152,8 +142,7 @@ public class DataParser extends AsyncTask<String,Void,Void>{
             connection.setRequestMethod("GET");
             connection.setDoInput(true);
             connection.connect();
-            int response = connection.getResponseCode();
-            //Log.d(TAG, "Risposta: " + response);
+
             is = connection.getInputStream();
             StringBuffer buffer = new StringBuffer();
 

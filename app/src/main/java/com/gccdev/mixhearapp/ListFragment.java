@@ -9,79 +9,91 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
-public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-
+public class ListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int URL_LOADER = 1;
     public static final String TAG = "list";
     private Context context;
     private View rootView;
     private static final String NEW = "new";
-
-    private ListView listView;
+    private String selected;
+    private RecyclerView listView;
     private CustomAdapter adapter;
+
+    private SwipeRefreshLayout refreshLayout;
 
     private Communication listener;
 
-    public MainFragment() {
-
+    public ListFragment(String selected) {
+        this.selected = selected;
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        listener = (Communication)context;
-//    }
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        getActivity().getSupportLoaderManager().destroyLoader(1);
-//    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (Communication)context;
+    }
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        getActivity().getSupportLoaderManager().destroyLoader(URL_LOADER);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+
     }
+
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment, menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            DataParser dataParser = new DataParser(context,rootView);
-            dataParser.execute(NEW);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
         context=getActivity();
 
-        listView = (ListView)rootView.findViewById(R.id.listview);
+//        refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_layout);
+//        refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
+//
+//        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                DataParser dataParser = new DataParser(context,rootView);
+//                dataParser.execute(NEW);
+//                refreshLayout.setRefreshing(false);
+//
+//            }
+//        });
 
-        DataParser dataParser = new DataParser(context,rootView);
-        dataParser.execute(NEW);
 
-        getActivity().getSupportLoaderManager().initLoader(1,null,this);
+        listView = (RecyclerView)rootView.findViewById(R.id.songList);
+        listView.setItemAnimator(new DefaultItemAnimator());
+        listView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listView.setHasFixedSize(true);
+
+
+
+
+        getActivity().getSupportLoaderManager().initLoader(URL_LOADER,null,this);
         return rootView;
     }
 
@@ -90,6 +102,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        DataParser dataParser = new DataParser(context,rootView);
+        dataParser.execute(NEW);
         Uri songUri = Contract.Songs.CONTENT_URI;
         String[] mProjection = {
                 Contract.Songs.COLUMN_ID,
@@ -108,17 +122,14 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-    cursor.moveToFirst();
-        adapter = new CustomAdapter(context,cursor);
-        listView.setAdapter(adapter);
 
         if(adapter==null){
 
-            adapter = new CustomAdapter(context,cursor);
+            adapter = new CustomAdapter(cursor);
 
             adapter.setOnItemClickListener(new CustomAdapter.OnItemClickListener() {
                 @Override
-                public void onItemClick(long id) {
+                public void onItemClick(int id) {
 
                     if(listener!=null)
                         listener.onItemChoosed(id);
@@ -133,12 +144,16 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             listView.setAdapter(adapter);
     }
 
+
     @Override
-    public void onLoaderReset(Loader loader) {
+    public void onLoaderReset(Loader<Cursor> loader) {
     adapter.swapCursor(null);
     }
 
     public interface Communication{
-        void onItemChoosed(long id);
+        void onItemChoosed(int id);
     }
+
+
+
 }

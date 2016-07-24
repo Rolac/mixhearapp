@@ -36,8 +36,7 @@ public class Provider extends ContentProvider {
     @Override
     public boolean onCreate() {
         db = new Db(getContext());
-        Log.v(TAG,"DATABASE CREATO CORRETTAMENTE");
-        return true;
+       return true;
     }
 
     @Nullable
@@ -83,7 +82,7 @@ public class Provider extends ContentProvider {
 
         }
 
-        Log.d(TAG, "query: " + uri.toString() + ", " + cursor.getCount());
+        Log.d(TAG, "query: " + uri.toString() + ", " + cursor.getCount()  );
 
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 

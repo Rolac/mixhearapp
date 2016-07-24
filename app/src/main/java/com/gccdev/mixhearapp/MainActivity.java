@@ -9,27 +9,39 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener , MainFragment.Communication {
+        implements NavigationView.OnNavigationItemSelectedListener , ListFragment.Communication {
 
+    private static final String TAG ="MainActivity";
     View rootView;
     private static final String NEW = "new";
     private static final String HOT = "popular/hot";
     private static final String POPULAR = "popular";
 
+    private SwipeRefreshLayout refreshLayout;
 
     private FragmentManager fm;
-    private MainFragment mainFragment;
-
+    private ListFragment listFragment;
+    private DetailFragment detailFragment;
+    String selected = NEW;
+    int mCurrentId = 0;
     private boolean isTabletLayout = false;
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putInt("ID", mCurrentId);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,16 +50,27 @@ public class MainActivity extends AppCompatActivity
         fm = getSupportFragmentManager();
         rootView = findViewById(android.R.id.content);
 
-        if (savedInstanceState == null && !isTabletLayout) {
-            mainFragment = new MainFragment();
+//
+//        if(findViewById(R.id.detailRoot)!=null)
+//            isTabletLayout=true;
+
+        if (savedInstanceState == null
+                //&& !isTabletLayout
+                ) {
+            listFragment = new ListFragment(selected);
             fm.beginTransaction()
-                    .replace(R.id.container, mainFragment)
-                    .addToBackStack(MainFragment.TAG)
+                    .replace(R.id.container, listFragment)
+                    .addToBackStack(ListFragment.TAG)
                     .commit();
         }
         else {
-            fm.beginTransaction().replace(R.id.songList,mainFragment).commit();
+            mCurrentId = savedInstanceState.getInt("ID",mCurrentId);
+            listFragment = new ListFragment(selected);
+            fm.beginTransaction()
+                    .replace(R.id.songList, listFragment)
+                    .commit();
         }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -57,7 +80,9 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        if (navigationView != null) {
+            navigationView.setNavigationItemSelectedListener(this);
+        }
 
         ConnectivityManager conman = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -75,16 +100,20 @@ public class MainActivity extends AppCompatActivity
       }
 
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_refresh) {
+            DataParser dataParser = new DataParser(this,rootView);
+            dataParser.execute(selected);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-
+        super.onBackPressed();
 
         if(fm.getBackStackEntryCount()==0)
             finish();
@@ -92,7 +121,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -105,33 +133,42 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_new) {
            dataParser.execute(NEW);
+            selected = NEW;
 
         } else if (id == R.id.nav_popular) {
           dataParser.execute(POPULAR);
+            selected = POPULAR;
 
         } else if (id == R.id.nav_hot) {
             dataParser.execute(HOT);
+            selected = HOT;
         } else if (id == R.id.nav_search) {
 
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if (drawer != null) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
         return true;
     }
 
 
     @Override
-    public void onItemChoosed(long id) {
-//
-//        if(roomDetailFragment==null)
-//            roomDetailFragment = RoomDetailFragment.newInstance(id);
-//
-//        if(isTabletLayout)
-//            fm.beginTransaction().replace(R.id.detailRoot, roomDetailFragment).commit();
-//
-//        else
-//            fm.beginTransaction().replace(R.id.container, roomDetailFragment).addToBackStack(RoomDetailFragment.TAG).commit();
+    public void onItemChoosed(int idx) {
+
+        detailFragment = DetailFragment.newInstance(idx);
+
+        if(isTabletLayout)
+            fm.beginTransaction()
+                    .replace(R.id.detailRoot, detailFragment)
+                    .commit();
+
+        else
+            fm.beginTransaction()
+                    .replace(R.id.container, detailFragment)
+                    .addToBackStack(DetailFragment.TAG)
+                    .commit();
     }
 
 }
