@@ -1,5 +1,6 @@
 package com.gccdev.mixhearapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+@SuppressLint("ValidFragment")
 public class ListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int URL_LOADER = 1;
     public static final String TAG = "list";
@@ -71,19 +73,6 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
         context=getActivity();
 
-//        refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_layout);
-//        refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW);
-//
-//        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                DataParser dataParser = new DataParser(context,rootView);
-//                dataParser.execute(NEW);
-//                refreshLayout.setRefreshing(false);
-//
-//            }
-//        });
-
 
         listView = (RecyclerView)rootView.findViewById(R.id.songList);
         listView.setItemAnimator(new DefaultItemAnimator());
@@ -108,7 +97,9 @@ public class ListFragment extends Fragment implements LoaderManager.LoaderCallba
         String[] mProjection = {
                 Contract.Songs.COLUMN_ID,
                 Contract.Songs.COLUMN_TITLE,
-                Contract.Songs.COLUMN_PIC_MEDIUM};
+                Contract.Songs.COLUMN_PIC_MEDIUM,
+                Contract.Songs.COLUMN_FAVORITE_COUNT,
+                Contract.Songs.COLUMN_LISTENER_COUNT};
 
         return new CursorLoader(
                 context,

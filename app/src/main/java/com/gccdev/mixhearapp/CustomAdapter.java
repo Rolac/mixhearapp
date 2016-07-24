@@ -1,6 +1,5 @@
 package com.gccdev.mixhearapp;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,10 +15,7 @@ import com.bumptech.glide.Glide;
 public class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
 
-    private Context mActivity;
-
     Cursor cursor;
-    LayoutInflater inflater;
 
     private OnItemClickListener listener;
 
@@ -28,6 +24,8 @@ public class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.cursor = cursor;
 
     }
+
+    private int previousPosition = 0;
 
 
 
@@ -47,8 +45,16 @@ public class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final int id = cursor.getInt(cursor.getColumnIndex(Contract.Songs.COLUMN_ID));
         final String text = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_TITLE));
         final String url = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_PIC_MEDIUM));
+        final String fav = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_FAVORITE_COUNT));
 
-        buildHolder((ViewHolder) holder, id, text, url);
+        if(position > previousPosition){
+            AnimationUtil.animate(holder, true);
+        }else{
+           AnimationUtil.animate(holder, false);
+        }
+        previousPosition = position;
+
+        buildHolder((ViewHolder) holder, id, text, url,fav);
     }
 
     @Override
@@ -68,7 +74,7 @@ public class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
 
-    private void buildHolder(ViewHolder holder, final int id, String name, String image){
+    private void buildHolder(ViewHolder holder, final int id, String name, String image, String fav){
 
 
         Glide
@@ -79,6 +85,7 @@ public class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                .into(holder.imageView);
 
         holder.nameView.setText(name);
+        holder.itemFavorite.setText(fav);
 
         holder.rootLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +100,7 @@ public class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     static class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView nameView;
+        TextView itemFavorite;
         ImageView imageView;
         LinearLayout rootLayout;
 
@@ -102,6 +110,7 @@ public class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             rootLayout = (LinearLayout) itemView.findViewById(R.id.rootLayout);
             nameView = (TextView)itemView.findViewById(R.id.textListItem);
             imageView = (ImageView)itemView.findViewById(R.id.imageListItem);
+            itemFavorite = (TextView)itemView.findViewById(R.id.itemFavorite);
         }
     }
 

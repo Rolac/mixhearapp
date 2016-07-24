@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -30,11 +31,9 @@ public class MainActivity extends AppCompatActivity
     private SwipeRefreshLayout refreshLayout;
 
     private FragmentManager fm;
-    private ListFragment listFragment;
-    private DetailFragment detailFragment;
     String selected = NEW;
     int mCurrentId = 0;
-    private boolean isTabletLayout = false;
+
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -50,20 +49,28 @@ public class MainActivity extends AppCompatActivity
         fm = getSupportFragmentManager();
         rootView = findViewById(android.R.id.content);
 
-//
-//        if(findViewById(R.id.detailRoot)!=null)
-//            isTabletLayout=true;
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
-        if (savedInstanceState == null
-                //&& !isTabletLayout
-                ) {
-            listFragment = new ListFragment(selected);
-            fm.beginTransaction()
-                    .replace(R.id.container, listFragment)
-                    .addToBackStack(ListFragment.TAG)
-                    .commit();
+        ListFragment listFragment;
+        if (savedInstanceState == null) {
+
+       drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+                listFragment = new ListFragment(selected);
+                fm.beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .replace(R.id.container, listFragment)
+                        .addToBackStack(ListFragment.TAG)
+                        .commit();
+
         }
         else {
+
             mCurrentId = savedInstanceState.getInt("ID",mCurrentId);
             listFragment = new ListFragment(selected);
             fm.beginTransaction()
@@ -71,14 +78,10 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+
+
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(this);
@@ -98,6 +101,7 @@ public class MainActivity extends AppCompatActivity
                     .setAction("Action", null).show();
 
       }
+
 
     }
     @Override
@@ -142,8 +146,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_hot) {
             dataParser.execute(HOT);
             selected = HOT;
-        } else if (id == R.id.nav_search) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -157,14 +159,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onItemChoosed(int idx) {
 
-        detailFragment = DetailFragment.newInstance(idx);
+        DetailFragment detailFragment = DetailFragment.newInstance(idx);
 
-        if(isTabletLayout)
-            fm.beginTransaction()
-                    .replace(R.id.detailRoot, detailFragment)
-                    .commit();
-
-        else
             fm.beginTransaction()
                     .replace(R.id.container, detailFragment)
                     .addToBackStack(DetailFragment.TAG)

@@ -40,6 +40,9 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             String title = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_TITLE));
             String urlImageLarge = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Songs.COLUMN_PIC_LARGE));
+            if(urlImageLarge == null){
+                urlImageLarge = cursor.getString(cursor.getColumnIndexOrThrow(Contract.Songs.COLUMN_PIC_MEDIUM));
+            }
             String length = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_LENGTH));
             String favorite = String.valueOf(cursor.getInt(cursor.getColumnIndex(Contract.Songs.COLUMN_FAVORITE_COUNT)));
             String comment = String.valueOf(cursor.getInt(cursor.getColumnIndex(Contract.Songs.COLUMN_COMMENT_COUNT)));
