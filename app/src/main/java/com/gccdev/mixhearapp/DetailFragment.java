@@ -5,11 +5,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +25,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private static final int URL_LOADER = 2;
     Bundle bundle = new Bundle();
-    private View view;
+    private View view,view2;
     public static final String TAG = "songDetail";
     private Context context;
     Cursor cursor;
@@ -40,12 +42,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     }
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-//        bundle.putInt("id",getArguments().getInt(Contract.Songs.COLUMN_ID));
-     //   getActivity().getSupportLoaderManager().restartLoader(URL_LOADER,null,this);
     }
     @Override
     public void onDetach() {
@@ -58,11 +59,12 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        view = inflater.inflate(R.layout.content_detail, container, false);
+       // view = inflater.inflate(R.layout.content_detail, container, false);
+        view = inflater.inflate(R.layout.activity_detail, container, false);
 
-//        recyclerView = (RecyclerView)view.findViewById(R.id.detailFrag);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        recyclerView.setHasFixedSize(true);
+        CollapsingToolbarLayout collapsingToolbar =
+                (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
+        collapsingToolbar.setTitle("Ciao");
 
 
         context=getActivity();
@@ -116,18 +118,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
 
-//            if(adapter==null) {
-//
-//                adapter = new DetailAdapter(cursor, Integer.parseInt(val));
-//            }
-//            else adapter.swapCursor(cursor);
-//
-//            if(recyclerView.getAdapter()==null)
-//                recyclerView.setAdapter(adapter);
+
 
         TextView textView = (TextView) view.findViewById(R.id.titolo);
         TextView lengthView = (TextView)view.findViewById(R.id.textLength);
-        ImageView imageView = (ImageView) view.findViewById(R.id.imageSongLarge);
+       ImageView imageView = (ImageView) view.findViewById(R.id.imageSongLarge);
         TextView favoriteView = (TextView)view.findViewById(R.id.textFavorite);
         TextView commentView = (TextView)view.findViewById(R.id.textComment);
         TextView listenerView = (TextView)view.findViewById(R.id.textListener);
@@ -146,7 +141,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
        listenerView.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(Contract.Songs.COLUMN_LISTENER_COUNT))));
        authorView.setText(cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_AUTHOR)));
        createView.setText(cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_CREATED_TIME)));
-       urlView.setText(cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_URL)));
+            String url = cursor.getString(cursor.getColumnIndex(Contract.Songs.COLUMN_URL));
+
+       urlView.setText(url);
+            urlView.setMovementMethod(LinkMovementMethod.getInstance());
 
             Glide
                     .with(context)
@@ -155,6 +153,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     .placeholder(R.drawable.ic_menu_gallery)
                     .into(imageView);
         }
+
+
 
 
     }

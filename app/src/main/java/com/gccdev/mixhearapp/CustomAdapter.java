@@ -109,7 +109,7 @@ public class CustomAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             rootLayout = (LinearLayout) itemView.findViewById(R.id.rootLayout);
             nameView = (TextView)itemView.findViewById(R.id.textListItem);
-            imageView = (ImageView)itemView.findViewById(R.id.imageListItem);
+            imageView = (ImageView)itemView.findViewById(R.id.imageSong);
             itemFavorite = (TextView)itemView.findViewById(R.id.itemFavorite);
         }
     }

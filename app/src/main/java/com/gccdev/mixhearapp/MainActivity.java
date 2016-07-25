@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -161,10 +163,20 @@ public class MainActivity extends AppCompatActivity
 
         DetailFragment detailFragment = DetailFragment.newInstance(idx);
 
+
+
+
+        detailFragment.setAllowEnterTransitionOverlap(true);
+        detailFragment.setAllowReturnTransitionOverlap(true);
+
             fm.beginTransaction()
                     .replace(R.id.container, detailFragment)
                     .addToBackStack(DetailFragment.TAG)
                     .commit();
+
+
     }
+
+
 
 }
